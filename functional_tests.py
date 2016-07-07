@@ -20,6 +20,11 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+    def check_for_row_in_list_table(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Emily heard an cool todo app
         # She checks her web
@@ -43,10 +48,7 @@ class NewVisitorTest(unittest.TestCase):
         # While she presses enter, website renews and lists out:
         # 1. Buy a basketball
         input_box.send_keys(Keys.ENTER)
-
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy a basketball', [row.text for row in rows])
+        self.check_for_row_in_list_table('1: Buy a basketball')
 
         # Now there still has an text bar to let her add other todos
         # She inputs 'Call friends to play basketball'
@@ -55,10 +57,8 @@ class NewVisitorTest(unittest.TestCase):
         input_box.send_keys(Keys.ENTER)
 
         # Website renews again, now she has 2 todo lists
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy a basketball', [row.text for row in rows])
-        self.assertIn('2: Call friends to play basketball', [row.text for row in rows])
+        self.check_for_row_in_list_table('1: Buy a basketball')
+        self.check_for_row_in_list_table('2: Call friends to play basketball')
 
         # Emily dosen't know if this website can remember her todos
         # She sees this website send an unique URL to her
