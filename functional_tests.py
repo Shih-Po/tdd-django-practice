@@ -1,7 +1,9 @@
 from selenium import webdriver
+# for firefox 47.0
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import unittest
 
+from selenium.webdriver.common.keys import Keys
 
 # here we start to build a user story
 
@@ -25,14 +27,28 @@ class NewVisitorTest(unittest.TestCase):
 
         # She founds "To-Do" in tile of the website
         self.assertIn('To-Do', self.browser.title)
-        self.fail('Finish the test!')
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('To-Do', header_text)
 
         # She creates one thing that she has todo by the invitation
+        input_box = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(
+            input_box.get_attribute('placeholder'),
+            'Enter a to-do item'
+        )
 
         # She inputs 'Buy a basketball'
+        input_box.send_keys('Buy a basketball')
 
         # While she presses enter, website renews and lists out:
         # 1. Buy a basketball
+        input_box.send_keys(Keys.ENTER)
+
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_element_by_tag_name('tr')
+        self.assertTrue(
+            any(row.text == '1: Buy a basketball' for row in rows)
+        )
 
         # Now there still has an text bar to let her add other todos
         # She inputs 'Call friends to play basketball'
@@ -46,6 +62,7 @@ class NewVisitorTest(unittest.TestCase):
         # She goes to this URL - Her todos still there.
 
         # She quits happily
+        self.fail('Finish the test!')
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
