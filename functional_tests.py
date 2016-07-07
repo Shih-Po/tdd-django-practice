@@ -46,15 +46,19 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: Buy a basketball' for row in rows),
-            "new to-do item did not appear in table"
-        )
+        self.assertIn('1: Buy a basketball', [row.text for row in rows])
 
         # Now there still has an text bar to let her add other todos
         # She inputs 'Call friends to play basketball'
+        input_box = self.browser.find_element_by_id('id_new_item')
+        input_box.send_keys('Call friends to play basketball')
+        input_box.send_keys(Keys.ENTER)
 
         # Website renews again, now she has 2 todo lists
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1: Buy a basketball', [row.text for row in rows])
+        self.assertIn('2: Call friends to play basketball', [row.text for row in rows])
 
         # Emily dosen't know if this website can remember her todos
         # She sees this website send an unique URL to her
