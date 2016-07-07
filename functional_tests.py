@@ -45,7 +45,7 @@ class NewVisitorTest(unittest.TestCase):
         input_box.send_keys(Keys.ENTER)
 
         table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_element_by_tag_name('tr')
+        rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(
             any(row.text == '1: Buy a basketball' for row in rows),
             "new to-do item did not appear in table"
