@@ -49,6 +49,9 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
         self.browser.implicitly_wait(6)
 
+        emily_list_url = self.browser.current_url
+        self.assertRegex(emily_list_url, '/lists/.+')
+
         self.check_for_row_in_list_table('1: Buy a basketball')
 
         # Now there still has an text bar to let her add other todos
@@ -62,14 +65,36 @@ class NewVisitorTest(LiveServerTestCase):
         self.check_for_row_in_list_table('1: Buy a basketball')
         self.check_for_row_in_list_table('2: Call friends to play basketball')
 
-        # Emily dosen't know if this website can remember her todos
-        # She sees this website send an unique URL to her
-        # Website give some description for this feature
+        # Now a new user Francis comes
 
-        # She goes to this URL - Her todos still there.
+        ## We use an new browser process to confirm
+        ## Any information about Emily will not present by cookies or other ways
+        self.browser.quit()
+        self.browser = webdriver.Firefox(capabilities=caps)
 
-        # She quits happily
+        # Francis go to the homepage
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy a basketball', page_text)
+        self.assertNotIn('Call friends to play basketball', page_text)
+
+        # Francis input an new item, make a new list
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.ENTER)
+        self.browser.implicitly_wait(6)
+
+        # Francis get his own unique URL
+        francis_list_url = self.browser.current_url
+        self.assertRegex(francis_list_url, '/lists/.+')
+        self.assertNotIn(francis_list_url, emily_list_url)
+
+        # There still no emily's list
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Call friends to play basketball', page_text)
+        self.assertIn('Buy milk')
+
+        # He quits happily
         self.fail('Finish the test!')
 
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
+
