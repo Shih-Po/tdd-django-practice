@@ -13,7 +13,7 @@ class NewVisitorTest(LiveServerTestCase):
         caps["marionette"] = True
         self.browser = webdriver.Firefox(capabilities=caps)
 
-        # set a easy wait
+        # set an easy wait
         self.browser.implicitly_wait(3)
 
     def tearDown(self):
@@ -47,6 +47,8 @@ class NewVisitorTest(LiveServerTestCase):
         # While she presses enter, website renews and lists out:
         # 1. Buy a basketball
         inputbox.send_keys(Keys.ENTER)
+        self.browser.implicitly_wait(6)
+
         self.check_for_row_in_list_table('1: Buy a basketball')
 
         # Now there still has an text bar to let her add other todos
@@ -54,6 +56,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Call friends to play basketball')
         inputbox.send_keys(Keys.ENTER)
+        self.browser.implicitly_wait(6)
 
         # The page updates again, and now show both items on her list
         self.check_for_row_in_list_table('1: Buy a basketball')
