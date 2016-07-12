@@ -14,7 +14,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser = webdriver.Firefox(capabilities=caps)
 
         # set an easy wait
-        self.browser.implicitly_wait(3)
+        self.browser.implicitly_wait(6)
 
     def tearDown(self):
         self.browser.quit()
@@ -26,15 +26,15 @@ class NewVisitorTest(LiveServerTestCase):
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Emily heard an cool todo app
-        # She checks her web
+        # to check out its homepage
         self.browser.get(self.live_server_url)
 
-        # She founds "To-Do" in title of the website
+        # She notices "To-Do" in title of the website
         self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('To-Do', header_text)
 
-        # She creates one thing that she has todo by the invitation
+        # She is invited to enter a to-do item straight away
         inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(
             inputbox.get_attribute('placeholder'),
@@ -44,7 +44,7 @@ class NewVisitorTest(LiveServerTestCase):
         # She inputs 'Buy a basketball'
         inputbox.send_keys('Buy a basketball')
 
-        # While she presses enter, website renews and lists out:
+        # When she hits enter, she is taken to a new URL:
         # 1. Buy a basketball
         inputbox.send_keys(Keys.ENTER)
         self.browser.implicitly_wait(6)
@@ -70,6 +70,8 @@ class NewVisitorTest(LiveServerTestCase):
         ## We use an new browser process to confirm
         ## Any information about Emily will not present by cookies or other ways
         self.browser.quit()
+        caps = DesiredCapabilities.FIREFOX
+        caps["marionette"] = True
         self.browser = webdriver.Firefox(capabilities=caps)
 
         # Francis go to the homepage
