@@ -3,6 +3,7 @@ from selenium import webdriver
 # for firefox 47.0
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.keys import Keys
+import time
 
 # here we start to build a user story
 
@@ -14,7 +15,8 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser = webdriver.Firefox(capabilities=caps)
 
         # set an easy wait
-        self.browser.implicitly_wait(6)
+        # self.browser.implicitly_wait(10)
+        time.sleep(3)
 
     def tearDown(self):
         self.browser.quit()
@@ -47,7 +49,7 @@ class NewVisitorTest(LiveServerTestCase):
         # When she hits enter, she is taken to a new URL:
         # 1. Buy a basketball
         inputbox.send_keys(Keys.ENTER)
-        self.browser.implicitly_wait(6)
+        self.browser.implicitly_wait(10)
 
         emily_list_url = self.browser.current_url
         self.assertRegex(emily_list_url, '/lists/.+')
@@ -59,7 +61,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Call friends to play basketball')
         inputbox.send_keys(Keys.ENTER)
-        self.browser.implicitly_wait(6)
+        self.browser.implicitly_wait(10)
 
         # The page updates again, and now show both items on her list
         self.check_for_row_in_list_table('1: Buy a basketball')
@@ -84,7 +86,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
-        self.browser.implicitly_wait(6)
+        self.browser.implicitly_wait(10)
 
         # Francis get his own unique URL
         francis_list_url = self.browser.current_url
@@ -94,7 +96,7 @@ class NewVisitorTest(LiveServerTestCase):
         # There still no emily's list
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Call friends to play basketball', page_text)
-        self.assertIn('Buy milk')
+        self.assertIn('Buy milk', page_text)
 
         # He quits happily
         self.fail('Finish the test!')
