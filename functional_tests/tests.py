@@ -1,4 +1,4 @@
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 # for firefox 47.0
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -7,7 +7,7 @@ import time
 
 # here we start to build a user story
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         caps = DesiredCapabilities.FIREFOX
@@ -99,6 +99,20 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn('Buy milk', page_text)
 
         # He quits happily
-        self.fail('Finish the test!')
+        
+    def test_layout_and_styling(self):
+        # Emily goes to the home page
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        # She notices the input box is nicely centered
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            512,
+            delta=5
+        )
+
+
 
 
